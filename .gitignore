@@ -204,4 +204,7 @@ pip-selfcheck.json
 .history
 .ionide
 
+# .DS_store 무시
+.DS_Store
+
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,venv,python
