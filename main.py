@@ -43,12 +43,13 @@ async def read_clothes(file: UploadFile):
 
     clothes_categories = ['Not sure', 'T-Shirt', 'Shoes', 'Shorts', 'Shirt', 'Pants', 'Skirt', 'Other', 'Top', 'Outwear', 'Dress', 'Body', 'Longsleeve', 'Undershirt', 'Hat', 'Polo', 'Blouse', 'Hoodie', 'Skip', 'Blazer']
 
-    color = "white"
+    color = ct.getClothesColor(image)
     pattern = "muji"
     clothes_type = clothes_categories[ct.getClothesType(image)]
 
-    return {"isSuccess": True,
-            "code": "2000",
-            "message": "Ok",
-            "result": color + " 의 " + pattern + " 패턴의 " + clothes_type + " 입니다."
+    return {
+        "isSuccess": True,
+        "code": "2000",
+        "message": "Ok",
+        "result": color + " 의 " + pattern + " 패턴의 " + clothes_type + " 입니다."
     }
