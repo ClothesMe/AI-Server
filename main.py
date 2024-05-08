@@ -43,9 +43,14 @@ async def read_clothes(file: UploadFile):
 
     clothes_categories = ['Not sure', 'T-Shirt', 'Shoes', 'Shorts', 'Shirt', 'Pants', 'Skirt', 'Other', 'Top', 'Outwear', 'Dress', 'Body', 'Longsleeve', 'Undershirt', 'Hat', 'Polo', 'Blouse', 'Hoodie', 'Skip', 'Blazer']
 
-    color = ct.getClothesColor(image)
+    # 옷 배경 제거한 후 이미지 파일 넘겨주기
+    removed_image = ct.remove_background(image) # 배경 제거
+    pil_image = Image.fromarray(removed_image) # 이미지를 PIL 이미지로 변환
+
+    # 옷 정보 받아오기
+    color = ct.getClothesColor(pil_image)
     pattern = "muji"
-    clothes_type = clothes_categories[ct.getClothesType(image)]
+    clothes_type = clothes_categories[ct.getClothesType(pil_image)]
 
     return {
         "isSuccess": True,
