@@ -3,7 +3,7 @@ import socks
 from fastapi import FastAPI
 from fastapi import File, UploadFile
 import numpy as np
-import clothes_type as ct
+import clothes_info as ct
 import matplotlib.pyplot as plt
 from PIL import Image
 import io
@@ -42,6 +42,7 @@ async def read_clothes(file: UploadFile):
     image = Image.open(io.BytesIO(image))
 
     clothes_categories = ['Not sure', 'T-Shirt', 'Shoes', 'Shorts', 'Shirt', 'Pants', 'Skirt', 'Other', 'Top', 'Outwear', 'Dress', 'Body', 'Longsleeve', 'Undershirt', 'Hat', 'Polo', 'Blouse', 'Hoodie', 'Skip', 'Blazer']
+    clothes_pattern = ['argyle', 'camouflage', 'checked', 'dot', 'floral', 'geometric', 'gradient','graphic', 'houndstooth', 'leopard', 'lettering', 'muji', 'paisley', 'snake_skin','snow_flake', 'stripe', 'tropical', 'zebra', 'zigzag']
 
     # 옷 배경 제거한 후 이미지 파일 넘겨주기
     removed_image = ct.remove_background(image) # 배경 제거
@@ -49,7 +50,7 @@ async def read_clothes(file: UploadFile):
 
     # 옷 정보 받아오기
     color = ct.getClothesColor(pil_image)
-    pattern = "muji"
+    pattern = clothes_pattern[ct.getClothesPattern(pil_image)]
     clothes_type = clothes_categories[ct.getClothesType(pil_image)]
 
     return {
