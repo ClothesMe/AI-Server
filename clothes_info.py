@@ -10,6 +10,11 @@ from PIL import Image
 import white_balance
 import tempfile
 
+# 옷 종류 모델 로드
+saved_model_type = tf.keras.models.load_model("./clothes_type_model_#7.h5")
+
+# 옷 패턴 모델 로드
+saved_model_pattern = tf.keras.models.load_model("./pattern_model.h5")
 
 def remove_background(clothes_image):
     """
@@ -39,12 +44,10 @@ def preprocess_image(image):
     return preprocessed_image
 
 def getClothesType(image):
-    # 옷 종류 모델 로드
-    saved_model = tf.keras.models.load_model("./clothes_type_model_#7.h5")
 
     # 새로운 이미지 전처리 및 예측
     preprocessed_image = preprocess_image(image)
-    predictions = saved_model.predict(preprocessed_image)
+    predictions = saved_model_type.predict(preprocessed_image)
 
     # 예측 결과 확인
     predicted_class = np.argmax(predictions)  # 가장 높은 확률을 가진 클래스 인덱스
@@ -76,12 +79,10 @@ def getClothesColor(image):
 
 def getClothesPattern(image):
 
-    # 옷 패턴 모델 로드
-    saved_model = tf.keras.models.load_model("./pattern_model.h5")
 
     # 새로운 이미지 전처리 및 예측
     preprocessed_image = preprocess_image(image)
-    predictions = saved_model.predict(preprocessed_image)
+    predictions = saved_model_pattern.predict(preprocessed_image)
 
     # 예측 결과 확인
     predicted_class = np.argmax(predictions)  # 가장 높은 확률을 가진 클래스 인덱스

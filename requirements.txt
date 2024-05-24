@@ -2,3 +2,9 @@ fastapi
 redis
 types-redis
 uvicorn
+tensorflow
+opencv-python
+rembg
+colorThief
+python-multipart
+matplotlib
