@@ -8,3 +8,4 @@ rembg
 colorThief
 python-multipart
 matplotlib
+pillow

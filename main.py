@@ -20,18 +20,24 @@ def socks_color(socks_image_path):
     :return: None
     """
 
+    clothes_pattern = ['argyle', 'camouflage', 'checked', 'dot', 'floral', 'geometric', 'gradient','graphic', 'houndstooth', 'leopard', 'lettering', 'muji', 'paisley', 'snake_skin','snow_flake', 'stripe', 'tropical', 'zebra', 'zigzag']
+
+
     # 이미지 로드
     socks_image = cv2.imread(socks_image_path)
 
     # 양말의 색상 판별
     left_color, right_color = socks.find_color_name(socks_image)
 
+    # 양말의 패턴 판별
+    pattern = clothes_pattern[socks.find_pattern(socks_image)]
+
    
     # 결과 출력
     if left_color == right_color: 
-         return {"왼쪽 양말의 색상은 ": left_color, "오른쪽 양말의 색상은 ": right_color, "양말의 짝이 ": "맞습니다."}
+         return {"왼쪽 양말의 색상은 ": left_color, "오른쪽 양말의 색상은 ": right_color, "패턴은 ": pattern, "양말의 짝이 ": "맞습니다."}
     else:
-        return {"왼쪽 양말의 색상은 ": left_color, "오른쪽 양말의 색상은 ": right_color, "양말의 짝이 ": "맞지 않습니다."}
+        return {"왼쪽 양말의 색상은 ": left_color, "오른쪽 양말의 색상은 ": right_color, "패턴은 ": pattern, "양말의 짝이 ": "맞지 않습니다."}
     
 
 @app.post("/clothes")

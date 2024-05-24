@@ -1,9 +1,29 @@
 import cv2
+import tensorflow as tf
 import color
 import white_balance
 from rembg import remove
+from PIL import Image
+import numpy as np
 from colorthief import ColorThief
 
+# 옷 패턴 모델 로드
+saved_model_pattern = tf.keras.models.load_model("./pattern_model.h5")
+
+def preprocess_image(image: np.ndarray) -> np.ndarray:
+    # numpy.ndarray 객체를 PIL.Image 객체로 변환
+    pil_image = Image.fromarray(image)
+    # RGB로 변환
+    rgb_image = pil_image.convert("RGB")
+    # PIL.Image 객체를 다시 numpy.ndarray로 변환
+    np_image = np.array(rgb_image)
+    # 이미지 크기 조정 (모델 입력 크기에 맞게 조정, 예: 224x224)
+    resized_image = cv2.resize(np_image, (224, 224))
+    # 이미지 스케일링 (0-1 범위로)
+    normalized_image = resized_image / 255.0
+    # 배치 차원 추가
+    batch_image = np.expand_dims(normalized_image, axis=0)
+    return batch_image
 
 def remove_background(socks_image):
     """
@@ -13,7 +33,7 @@ def remove_background(socks_image):
     """   
     removed_background = remove(socks_image)
     
-    cv2.imwrite('E:/clothesme/image_data/removed_background.jpg', removed_background)
+    cv2.imwrite('./removed_background.jpg', removed_background)
     return removed_background
 
 def find_color_name(socks_image):
@@ -39,8 +59,8 @@ def find_color_name(socks_image):
     cropped_left_image = socks_objects[0:height, 0:width // 2]
     cropped_right_image = socks_objects[0:height, width // 2:width]
 
-    cropped_left_image_path = 'E:/clothesme/image_data/socks_left.jpg'
-    cropped_right_image_path = 'E:/clothesme/image_data/socks_right.jpg'
+    cropped_left_image_path = './socks_left.jpg'
+    cropped_right_image_path = './socks_right.jpg'
     cv2.imwrite(cropped_left_image_path, cropped_left_image)
     cv2.imwrite(cropped_right_image_path, cropped_right_image)
 
@@ -52,3 +72,16 @@ def find_color_name(socks_image):
     color_name_right = color.extract_color(dominant_color_right)
 
     return color_name_left, color_name_right
+
+def find_pattern(socks_image):
+    processed_image = remove_background(socks_image)
+
+    # 새로운 이미지 전처리 및 예측
+    preprocessed_image = preprocess_image(processed_image)
+    predictions = saved_model_pattern.predict(preprocessed_image)
+
+    # 예측 결과 확인
+    predicted_class = np.argmax(predictions)  # 가장 높은 확률을 가진 클래스 인덱스
+
+    return int(predicted_class)
+
