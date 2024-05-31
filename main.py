@@ -12,8 +12,8 @@ import io
 
 app = FastAPI()
 
-@app.get("/socks")
-def socks_color(socks_image_path):
+@app.post("/socks")
+async def socks_color(file: UploadFile):
     """
     메인 함수: 양말 이미지와 배경 이미지를 입력받아 양말의 색상을 판별하고 짝이 맞는지 확인
     :param socks_image_path: 양말 이미지 경로
@@ -24,7 +24,9 @@ def socks_color(socks_image_path):
 
 
     # 이미지 로드
-    socks_image = cv2.imread(socks_image_path)
+    image_bytes = await file.read()
+    np_img = np.frombuffer(image_bytes, np.uint8)
+    socks_image = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
 
     # 양말의 색상 판별
     left_color, right_color = socks.find_color_name(socks_image)
