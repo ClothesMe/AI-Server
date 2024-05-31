@@ -32,14 +32,14 @@ async def socks_color(file: UploadFile):
     left_color, right_color = socks.find_color_name(socks_image)
 
     # 양말의 패턴 판별
-    pattern = clothes_pattern[socks.find_pattern(socks_image)]
+    left_pattern, right_pattern = socks.find_pattern(socks_image)
 
    
     # 결과 출력
-    if left_color == right_color: 
-         return {"왼쪽 양말의 색상은 ": left_color, "오른쪽 양말의 색상은 ": right_color, "패턴은 ": pattern, "양말의 짝이 ": "맞습니다."}
+    if left_color == right_color and left_pattern == right_pattern: 
+         return {"왼쪽 양말의 색상은 ": left_color, "오른쪽 양말의 색상은 ": right_color, "왼쪽 양말의 패턴은 ": clothes_pattern[left_pattern], "오른쪽 양말의 패턴은 ": clothes_pattern[right_pattern], "양말의 짝이 ": "맞습니다."}
     else:
-        return {"왼쪽 양말의 색상은 ": left_color, "오른쪽 양말의 색상은 ": right_color, "패턴은 ": pattern, "양말의 짝이 ": "맞지 않습니다."}
+        return {"왼쪽 양말의 색상은 ": left_color, "오른쪽 양말의 색상은 ": right_color, "왼쪽 양말의 패턴은 ": clothes_pattern[left_pattern], "오른쪽 양말의 패턴은 ": clothes_pattern[right_pattern], "양말의 짝이 ": "맞지 않습니다."}
     
 
 @app.post("/clothes")

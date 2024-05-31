@@ -74,14 +74,33 @@ def find_color_name(socks_image):
     return color_name_left, color_name_right
 
 def find_pattern(socks_image):
+    # 배경 제거
     processed_image = remove_background(socks_image)
 
+    # 화이트 밸런싱 적용
+    white_balanced_image = white_balance.white_balance(processed_image)
+
+    # 배경과 양말 객체 분리
+    socks_mask = cv2.cvtColor(processed_image, cv2.COLOR_BGR2GRAY)
+    _, socks_mask = cv2.threshold(socks_mask, 1, 255, cv2.THRESH_BINARY)
+    socks_objects = cv2.bitwise_and(white_balanced_image, white_balanced_image, mask=socks_mask)
+
+    # 좌우 양말로 나누기
+    height, width, _ = socks_objects.shape
+    cropped_left_image = socks_objects[0:height, 0:width // 2]
+    cropped_right_image = socks_objects[0:height, width // 2:width]
+
     # 새로운 이미지 전처리 및 예측
-    preprocessed_image = preprocess_image(processed_image)
-    predictions = saved_model_pattern.predict(preprocessed_image)
+    left_preprocessed_image = preprocess_image(cropped_left_image)
+    right_preprocessed_image = preprocess_image(cropped_right_image)
+
+    left_predictions = saved_model_pattern.predict(left_preprocessed_image)
+    right_predictions = saved_model_pattern.predict(right_preprocessed_image)
+
 
     # 예측 결과 확인
-    predicted_class = np.argmax(predictions)  # 가장 높은 확률을 가진 클래스 인덱스
+    left_predicted_class = np.argmax(left_predictions)  # 가장 높은 확률을 가진 클래스 인덱스
+    right_predicted_class = np.argmax(right_predictions)  # 가장 높은 확률을 가진 클래스 인덱스
 
-    return int(predicted_class)
+    return left_predicted_class, right_predicted_class
 
