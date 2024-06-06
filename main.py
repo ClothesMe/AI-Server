@@ -34,13 +34,21 @@ async def socks_color(file: UploadFile):
     # 양말의 패턴 판별
     left_pattern, right_pattern = socks.find_pattern(socks_image)
 
-   
-    # 결과 출력
+    # 양말의 짝 판별
     if left_color == right_color and left_pattern == right_pattern: 
-         return {"왼쪽 양말의 색상은 ": left_color, "오른쪽 양말의 색상은 ": right_color, "왼쪽 양말의 패턴은 ": clothes_pattern[left_pattern], "오른쪽 양말의 패턴은 ": clothes_pattern[right_pattern], "양말의 짝이 ": "맞습니다."}
+        pairing_result = "맞습니다."
     else:
-        return {"왼쪽 양말의 색상은 ": left_color, "오른쪽 양말의 색상은 ": right_color, "왼쪽 양말의 패턴은 ": clothes_pattern[left_pattern], "오른쪽 양말의 패턴은 ": clothes_pattern[right_pattern], "양말의 짝이 ": "맞지 않습니다."}
-    
+        pairing_result = "맞지 않습니다."
+
+    # 결과 출력
+    return {
+        "status": "success",
+        "code": "2000",
+        "message": "Ok",
+        "result": "왼쪽 양말의 색상은 " + left_color + ", " + "오른쪽 양말의 색상은 " + right_color + "이며, " 
+                + "왼쪽 양말의 패턴은 " + clothes_pattern[left_pattern] + ", 오늘쪽 양말의 패턴은 " + clothes_pattern[right_pattern] + "입니다. " 
+                + "양말의 짝이 " + pairing_result
+    }
 
 @app.post("/clothes")
 async def read_clothes(file: UploadFile):
@@ -62,8 +70,12 @@ async def read_clothes(file: UploadFile):
     clothes_type = clothes_categories[ct.getClothesType(pil_image)]
 
     return {
-        "isSuccess": True,
+        "status": "success",
         "code": "2000",
         "message": "Ok",
         "result": color + " 의 " + pattern + " 패턴의 " + clothes_type + " 입니다."
     }
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
