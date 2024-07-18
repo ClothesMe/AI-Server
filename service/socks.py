@@ -1,14 +1,14 @@
 import cv2
 import tensorflow as tf
-import common.color as color
-import white_balance
+from common import color as color
+from common import white_balance as white_balance
 from rembg import remove
 from PIL import Image
 import numpy as np
 from colorthief import ColorThief
 
 # 옷 패턴 모델 로드
-saved_model_pattern = tf.keras.models.load_model("./pattern_model.h5")
+saved_model_pattern = tf.keras.models.load_model("models/pattern_model.h5")
 
 def preprocess_image(image: np.ndarray) -> np.ndarray:
     # numpy.ndarray 객체를 PIL.Image 객체로 변환

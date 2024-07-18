@@ -3,18 +3,18 @@ import cv2
 import numpy as np
 from rembg import remove
 from colorthief import ColorThief
-import color
+import common.color as color
 import os
 import io
 from PIL import Image
-import white_balance
+import common.white_balance as white_balance
 import tempfile
 
 # 옷 종류 모델 로드
-saved_model_type = tf.keras.models.load_model("./clothes_type_model_#7.h5")
+saved_model_type = tf.keras.models.load_model("models/clothes_type_model_#7.h5")
 
 # 옷 패턴 모델 로드
-saved_model_pattern = tf.keras.models.load_model("./pattern_model.h5")
+saved_model_pattern = tf.keras.models.load_model("models/pattern_model.h5")
 
 def remove_background(clothes_image):
     """
