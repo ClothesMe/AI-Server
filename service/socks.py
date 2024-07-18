@@ -1,6 +1,6 @@
 import cv2
 import tensorflow as tf
-import color
+import common.color as color
 import white_balance
 from rembg import remove
 from PIL import Image
