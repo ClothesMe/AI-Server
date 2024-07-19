@@ -7,6 +7,106 @@ import numpy as np
 from colorthief import ColorThief
 from common import model as model
 
+def find_color_name(left_socks, right_socks):
+    """
+    양말 색상 판별
+    :param socks_image: 양말 이미지
+    :return: 양말의 왼쪽과 오른쪽 색상
+    """
+
+    # # 배경 제거
+    # processed_image = remove_background(socks_image)
+
+    # # 화이트 밸런싱 적용
+    # white_balanced_image = white_balance.white_balance(processed_image)
+
+    # # 배경과 양말 객체 분리
+    # socks_mask = cv2.cvtColor(processed_image, cv2.COLOR_BGR2GRAY)
+    # _, socks_mask = cv2.threshold(socks_mask, 1, 255, cv2.THRESH_BINARY)
+    # socks_objects = cv2.bitwise_and(white_balanced_image, white_balanced_image, mask=socks_mask)
+
+    # # 좌우 양말로 나누기
+    # height, width, _ = socks_objects.shape
+    # cropped_left_image = socks_objects[0:height, 0:width // 2]
+    # cropped_right_image = socks_objects[0:height, width // 2:width]
+
+    # cropped_left_image_path = './socks_left.jpg'
+    # cropped_right_image_path = './socks_right.jpg'
+    # cv2.imwrite(cropped_left_image_path, cropped_left_image)
+    # cv2.imwrite(cropped_right_image_path, cropped_right_image)
+
+    # # 좌우 양말 주요 색상 추출
+    # dominant_color_left =  ColorThief(cropped_left_image_path).get_color(quality=1)
+    # dominant_color_right = ColorThief(cropped_right_image_path).get_color(quality=1)
+
+    # color_name_left = color.extract_color(dominant_color_left)
+    # color_name_right = color.extract_color(dominant_color_right)
+
+    # cropped_left_image, cropped_right_image = getSocksImage(removedSocksImage)
+
+    color_name_left, color_name_right = color.getSocksMainColor(left_socks, right_socks)
+
+    return color_name_left, color_name_right
+
+def find_pattern(left_socks, right_socks):
+    # # 배경 제거
+    # processed_image = remove_background(socks_image)
+
+    # # 화이트 밸런싱 적용
+    # white_balanced_image = white_balance.white_balance(processed_image)
+
+    # # 배경과 양말 객체 분리
+    # socks_mask = cv2.cvtColor(processed_image, cv2.COLOR_BGR2GRAY)
+    # _, socks_mask = cv2.threshold(socks_mask, 1, 255, cv2.THRESH_BINARY)
+    # socks_objects = cv2.bitwise_and(white_balanced_image, white_balanced_image, mask=socks_mask)
+
+    # # 좌우 양말로 나누기
+    # height, width, _ = socks_objects.shape
+    # cropped_left_image = socks_objects[0:height, 0:width // 2]
+    # cropped_right_image = socks_objects[0:height, width // 2:width]
+
+    # cropped_left_image, cropped_right_image = getSocksImage(removed_socks_image)
+
+    # 새로운 이미지 전처리 및 예측
+    left_preprocessed_image = preprocess_image(left_socks)
+    right_preprocessed_image = preprocess_image(right_socks)
+
+    left_predictions = model.getPatternModel().predict(left_preprocessed_image)
+    right_predictions = model.getPatternModel().predict(right_preprocessed_image)
+
+    # 예측 결과 확인
+    left_predicted_class = np.argmax(left_predictions)  # 가장 높은 확률을 가진 클래스 인덱스
+    right_predicted_class = np.argmax(right_predictions)  # 가장 높은 확률을 가진 클래스 인덱스
+
+    return left_predicted_class, right_predicted_class
+
+
+
+# 공동 로직
+def getSocksImage(removedSocksImage):
+    # # 배경 제거
+    # processed_image = remove_background(socksImage)
+
+    # 화이트 밸런싱 적용
+    white_balanced_image = white_balance.white_balance(removedSocksImage)
+
+    # 배경과 양말 객체 분리
+    socks_mask = cv2.cvtColor(removedSocksImage, cv2.COLOR_BGR2GRAY)
+    _, socks_mask = cv2.threshold(socks_mask, 1, 255, cv2.THRESH_BINARY)
+    socks_objects = cv2.bitwise_and(white_balanced_image, white_balanced_image, mask=socks_mask)
+
+    # 좌우 양말로 나누기
+    height, width, _ = socks_objects.shape
+    cropped_left_image = socks_objects[0:height, 0:width // 2]
+    cropped_right_image = socks_objects[0:height, width // 2:width]
+
+    cropped_left_image_path = './socks_left2.jpg'
+    cropped_right_image_path = './socks_right2.jpg'
+    cv2.imwrite(cropped_left_image_path, cropped_left_image)
+    cv2.imwrite(cropped_right_image_path, cropped_right_image)
+
+    return cropped_left_image, cropped_right_image
+
 def preprocess_image(image: np.ndarray) -> np.ndarray:
     # numpy.ndarray 객체를 PIL.Image 객체로 변환
     pil_image = Image.fromarray(image)
@@ -21,83 +121,4 @@ def preprocess_image(image: np.ndarray) -> np.ndarray:
     # 배치 차원 추가
     batch_image = np.expand_dims(normalized_image, axis=0)
     return batch_image
-
-def remove_background(socks_image):
-    """
-    배경 제거
-    :param cloth_image: 배경 제거할 이미지
-    :return: 배경이 제거된 이미지
-    """   
-    removed_background = remove(socks_image)
-    
-    cv2.imwrite('./removed_background.jpg', removed_background)
-    return removed_background
-
-def find_color_name(socks_image):
-    """
-    양말 색상 판별
-    :param socks_image: 양말 이미지
-    :return: 양말의 왼쪽과 오른쪽 색상
-    """
-
-    # 배경 제거
-    processed_image = remove_background(socks_image)
-
-    # 화이트 밸런싱 적용
-    white_balanced_image = white_balance.white_balance(processed_image)
-
-    # 배경과 양말 객체 분리
-    socks_mask = cv2.cvtColor(processed_image, cv2.COLOR_BGR2GRAY)
-    _, socks_mask = cv2.threshold(socks_mask, 1, 255, cv2.THRESH_BINARY)
-    socks_objects = cv2.bitwise_and(white_balanced_image, white_balanced_image, mask=socks_mask)
-
-    # 좌우 양말로 나누기
-    height, width, _ = socks_objects.shape
-    cropped_left_image = socks_objects[0:height, 0:width // 2]
-    cropped_right_image = socks_objects[0:height, width // 2:width]
-
-    cropped_left_image_path = './socks_left.jpg'
-    cropped_right_image_path = './socks_right.jpg'
-    cv2.imwrite(cropped_left_image_path, cropped_left_image)
-    cv2.imwrite(cropped_right_image_path, cropped_right_image)
-
-    # 좌우 양말 주요 색상 추출
-    dominant_color_left =  ColorThief(cropped_left_image_path).get_color(quality=1)
-    dominant_color_right = ColorThief(cropped_right_image_path).get_color(quality=1)
-
-    color_name_left = color.extract_color(dominant_color_left)
-    color_name_right = color.extract_color(dominant_color_right)
-
-    return color_name_left, color_name_right
-
-def find_pattern(socks_image):
-    # 배경 제거
-    processed_image = remove_background(socks_image)
-
-    # 화이트 밸런싱 적용
-    white_balanced_image = white_balance.white_balance(processed_image)
-
-    # 배경과 양말 객체 분리
-    socks_mask = cv2.cvtColor(processed_image, cv2.COLOR_BGR2GRAY)
-    _, socks_mask = cv2.threshold(socks_mask, 1, 255, cv2.THRESH_BINARY)
-    socks_objects = cv2.bitwise_and(white_balanced_image, white_balanced_image, mask=socks_mask)
-
-    # 좌우 양말로 나누기
-    height, width, _ = socks_objects.shape
-    cropped_left_image = socks_objects[0:height, 0:width // 2]
-    cropped_right_image = socks_objects[0:height, width // 2:width]
-
-    # 새로운 이미지 전처리 및 예측
-    left_preprocessed_image = preprocess_image(cropped_left_image)
-    right_preprocessed_image = preprocess_image(cropped_right_image)
-
-    left_predictions = model.getPatternModel().predict(left_preprocessed_image)
-    right_predictions = model.getPatternModel().predict(right_preprocessed_image)
-
-
-    # 예측 결과 확인
-    left_predicted_class = np.argmax(left_predictions)  # 가장 높은 확률을 가진 클래스 인덱스
-    right_predicted_class = np.argmax(right_predictions)  # 가장 높은 확률을 가진 클래스 인덱스
-
-    return left_predicted_class, right_predicted_class
 

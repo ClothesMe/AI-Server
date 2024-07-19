@@ -3,13 +3,14 @@ from service import socks as socks
 from fastapi import FastAPI
 from fastapi import File, UploadFile
 import numpy as np
-from service import clothes_info as ct
+from service import clothes as ct
 from common import label as label
 import matplotlib.pyplot as plt
 from PIL import Image
 import io
 # import tensorflow
 # from tensorflow.keras.models import load_model
+from common import background as bg
 
 app = FastAPI()
 
@@ -26,11 +27,14 @@ async def socks_color(file: UploadFile):
     np_img = np.frombuffer(image_bytes, np.uint8)
     socks_image = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
 
+    removedSocksImage = bg.remove_background(socks_image)
+    left_socks, right_socks = socks.getSocksImage(removedSocksImage)
+
     # 양말의 색상 판별
-    left_color, right_color = socks.find_color_name(socks_image)
+    left_color, right_color = socks.find_color_name(left_socks, right_socks)
 
     # 양말의 패턴 판별
-    left_pattern, right_pattern = socks.find_pattern(socks_image)
+    left_pattern, right_pattern = socks.find_pattern(left_socks, right_socks)
 
     # 양말의 짝 판별
     if left_color == right_color and left_pattern == right_pattern: 
@@ -56,7 +60,7 @@ async def read_clothes(file: UploadFile):
     image = Image.open(io.BytesIO(image))
 
     # 옷 배경 제거한 후 이미지 파일 넘겨주기
-    removed_image = ct.remove_background(image) # 배경 제거
+    removed_image = bg.remove_background(image) # 배경 제거
     pil_image = Image.fromarray(removed_image) # 이미지를 PIL 이미지로 변환
 
     # 옷 정보 받아오기

@@ -1,36 +1,21 @@
 # import tensorflow as tf
 # import cv2
 import numpy as np
-from rembg import remove
 from colorthief import ColorThief
-import common.color as color
+import tempfile
 import os
 import io
 # from PIL import Image
 # import common.white_balance as white_balance
-import tempfile
 from common import model as model
-
-
-def remove_background(clothes_image):
-    """
-    배경 제거
-    :param cloth_image: 배경 제거할 이미지
-    :return: 배경이 제거된 이미지
-    """   
-    removed_background = remove(clothes_image)
-        
-    # numpy 배열로 변환
-    removed_background_np = np.array(removed_background)
-
-    return removed_background_np
+from common import color as color
 
 
 def getClothesType(image):
 
     # 새로운 이미지 전처리 및 예측
     preprocessed_image = preprocess_image(image)
-    predictions = model.getTypeModel.predict(preprocessed_image)
+    predictions = model.getTypeModel().predict(preprocessed_image)
 
     # 예측 결과 확인
     predicted_class = np.argmax(predictions)  # 가장 높은 확률을 가진 클래스 인덱스
@@ -39,33 +24,32 @@ def getClothesType(image):
 
 def getClothesColor(image):
 
-    # 이미지 모드가 RGBA인 경우 RGB로 변환
-    if image.mode == 'RGBA':
-        image = image.convert('RGB')
+    # # 이미지 모드가 RGBA인 경우 RGB로 변환
+    # if image.mode == 'RGBA':
+    #     image = image.convert('RGB')
 
 
-    # 처리된 이미지를 저장할 임시 파일 생성
-    with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as temp_image:
-        temp_image_path = temp_image.name
-        image.save(temp_image_path)
+    # # 처리된 이미지를 저장할 임시 파일 생성
+    # with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as temp_image:
+    #     temp_image_path = temp_image.name
+    #     image.save(temp_image_path)
 
-    # 옷 주요 색상 추출
-    thief = ColorThief(temp_image_path)
-    image_color = thief.get_color(quality=1)
+    # # 옷 주요 색상 추출
+    # thief = ColorThief(temp_image_path)
+    # image_color = thief.get_color(quality=1)
 
-    clothes_color = color.extract_color(image_color)
+    clothes_color = color.getClothesMainColor(image)
 
     # 이미지 파일을 삭제합니다.
-    os.remove(temp_image_path)
+    # os.remove(temp_image_path)
 
     return clothes_color
 
 def getClothesPattern(image):
 
-
     # 새로운 이미지 전처리 및 예측
     preprocessed_image = preprocess_image(image)
-    predictions = model.getPatternModel.predict(preprocessed_image)
+    predictions = model.getPatternModel().predict(preprocessed_image)
 
     # 예측 결과 확인
     predicted_class = np.argmax(predictions)  # 가장 높은 확률을 가진 클래스 인덱스
