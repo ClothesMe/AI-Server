@@ -50,11 +50,6 @@ def getSocksImage(removedSocksImage):
     cropped_left_image = socks_objects[0:height, 0:width // 2]
     cropped_right_image = socks_objects[0:height, width // 2:width]
 
-    # cropped_left_image_path = './socks_left3.jpg'
-    # cropped_right_image_path = './socks_right3.jpg'
-    # cv2.imwrite(cropped_left_image_path, cropped_left_image)
-    # cv2.imwrite(cropped_right_image_path, cropped_right_image)
-
     return cropped_left_image, cropped_right_image
 
 def preprocess_image(image: np.ndarray) -> np.ndarray:
