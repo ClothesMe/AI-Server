@@ -1,14 +1,11 @@
 import cv2
-import tensorflow as tf
 from common import color as color
 from common import white_balance as white_balance
 from rembg import remove
 from PIL import Image
 import numpy as np
 from colorthief import ColorThief
-
-# 옷 패턴 모델 로드
-saved_model_pattern = tf.keras.models.load_model("models/pattern_model.h5")
+from common import model as model
 
 def preprocess_image(image: np.ndarray) -> np.ndarray:
     # numpy.ndarray 객체를 PIL.Image 객체로 변환
@@ -94,8 +91,8 @@ def find_pattern(socks_image):
     left_preprocessed_image = preprocess_image(cropped_left_image)
     right_preprocessed_image = preprocess_image(cropped_right_image)
 
-    left_predictions = saved_model_pattern.predict(left_preprocessed_image)
-    right_predictions = saved_model_pattern.predict(right_preprocessed_image)
+    left_predictions = model.getPatternModel().predict(left_preprocessed_image)
+    right_predictions = model.getPatternModel().predict(right_preprocessed_image)
 
 
     # 예측 결과 확인
