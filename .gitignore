@@ -212,5 +212,6 @@ pip-selfcheck.json
 test.py
 다운로드.jpeg
 locustfile.py
+model_lite.py
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,venv,python

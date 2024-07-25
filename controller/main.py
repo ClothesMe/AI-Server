@@ -8,8 +8,6 @@ from common import label as label
 import matplotlib.pyplot as plt
 from PIL import Image
 import io
-# import tensorflow
-# from tensorflow.keras.models import load_model
 from common import background as bg
 
 app = FastAPI()
@@ -18,8 +16,6 @@ app = FastAPI()
 async def socks_color(file: UploadFile):
     """
     메인 함수: 양말 이미지와 배경 이미지를 입력받아 양말의 색상을 판별하고 짝이 맞는지 확인
-    :param socks_image_path: 양말 이미지 경로
-    :return: None
     """
 
     # 이미지 로드
@@ -54,7 +50,6 @@ async def socks_color(file: UploadFile):
 
 @app.post("/clothes")
 async def read_clothes(file: UploadFile):
-    UPLOAD_DIR = "./photo"  # 이미지를 저장할 서버 경로
 
     image = await file.read() # 이미지 파일 받아오는 부분
     image = Image.open(io.BytesIO(image))
