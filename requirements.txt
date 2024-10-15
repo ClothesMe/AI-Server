@@ -9,3 +9,4 @@ colorThief
 python-multipart
 matplotlib
 pillow
+locust

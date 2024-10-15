@@ -1,5 +1,10 @@
 import cv2
 import numpy as np
+from colorthief import ColorThief
+import tempfile
+import os
+from PIL import Image
+from io import BytesIO
 
 # 색상을 나타내는 HSV 값과 색상 이름을 딕셔너리로 정의
 HSV = {
@@ -128,6 +133,46 @@ HSV = {
 
 hsv = list(HSV.keys())
 hsv_len = len(hsv)
+
+def getClothesMainColor(image):
+    # 이미지 모드가 RGBA인 경우 RGB로 변환
+    if image.mode == 'RGBA':
+        image = image.convert('RGB')
+
+
+    # 처리된 이미지를 저장할 임시 파일 생성
+    with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as temp_image:
+        temp_image_path = temp_image.name
+        image.save(temp_image_path)
+
+    # 옷 주요 색상 추출
+    thief = ColorThief(temp_image_path)
+    image_color = thief.get_color(quality=1)
+
+    clothes_color = extract_color(image_color)
+
+    # 이미지 파일을 삭제합니다.
+    os.remove(temp_image_path)
+
+    return clothes_color
+
+def getSocksMainColor(cropped_left_image, cropped_right_image):
+    # 좌우 양말 주요 색상 추출
+    dominant_color_left =  ColorThief(numpy_to_bytesio(cropped_left_image)).get_color(quality=1)
+    dominant_color_right = ColorThief(numpy_to_bytesio(cropped_right_image)).get_color(quality=1)
+
+    color_name_left = extract_color(dominant_color_left)
+    color_name_right = extract_color(dominant_color_right)
+
+    return color_name_left, color_name_right
+
+# numpy.ndarray를 PIL.Image로 변환한 후, BytesIO로 변환하는 함수
+def numpy_to_bytesio(image_array):
+    image = Image.fromarray(image_array)
+    img_byte_arr = BytesIO()
+    image.save(img_byte_arr, format='PNG')
+    img_byte_arr.seek(0)
+    return img_byte_arr
 
 def extract_color(rgb):
     rgb = np.uint8([[rgb]])
