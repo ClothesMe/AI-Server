@@ -24,25 +24,8 @@ def getClothesType(image):
 
 def getClothesColor(image):
 
-    # # 이미지 모드가 RGBA인 경우 RGB로 변환
-    # if image.mode == 'RGBA':
-    #     image = image.convert('RGB')
-
-
-    # # 처리된 이미지를 저장할 임시 파일 생성
-    # with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as temp_image:
-    #     temp_image_path = temp_image.name
-    #     image.save(temp_image_path)
-
-    # # 옷 주요 색상 추출
-    # thief = ColorThief(temp_image_path)
-    # image_color = thief.get_color(quality=1)
-
     clothes_color = color.getClothesMainColor(image)
-
-    # 이미지 파일을 삭제합니다.
-    # os.remove(temp_image_path)
-
+    
     return clothes_color
 
 def getClothesPattern(image):
