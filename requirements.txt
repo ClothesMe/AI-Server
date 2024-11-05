@@ -10,3 +10,8 @@ python-multipart
 matplotlib
 pillow
 locust
+
+# DB 관련
+pymysql
+pydantic
+sqlalchemy
