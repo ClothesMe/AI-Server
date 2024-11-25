@@ -1,6 +1,6 @@
 import cv2
 from service import socks as socks
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi import File, UploadFile
 import numpy as np
 from service import clothes as ct
@@ -9,8 +9,23 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import io
 from common import background as bg
+from sqlalchemy.orm import Session
+from db.database import Base, engine, SessionLocal
+import db.database as database
+import uuid
+
+# 데이터베이스 초기화
+database.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+# 의존성 주입: DB 세션 생성
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 @app.post("/socks")
 async def socks_color(file: UploadFile):
@@ -68,6 +83,18 @@ async def read_clothes(file: UploadFile):
         "code": "2000",
         "message": "Ok",
         "result": color + " 의 " + pattern + " 패턴의 " + clothes_type + " 입니다."
+    }
+
+# 회원가입
+@app.post("/members")
+def create_user(db: Session = Depends(get_db)):
+    member_uuid = uuid.uuid4()
+    database.create_member(db=db, uuid=member_uuid)
+    return {
+        "status": "success",
+        "code": "2000",
+        "message": "Ok",
+        "result": member_uuid
     }
 
 if __name__ == "__main__":
