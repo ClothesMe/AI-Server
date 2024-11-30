@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 from sqlalchemy import Column, TEXT, INT, BIGINT, ForeignKey, String
 # from sqlalchemy.ext.declarative import declartive_base
-from db.db_config import DB_URL;
+from config.db_config import DB_URL;
 
 # 데이터베이스 연결 설정
 engine = create_engine(DB_URL)
