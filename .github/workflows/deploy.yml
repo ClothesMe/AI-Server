@@ -14,6 +14,7 @@ jobs:
       - name: rds, s3 관련 파일 생성
         run: |
           echo "${{ secrets.DB_CONFIG }}" > ./db_config.py
+          echo "${{ secrets.S3_CONFIG }}" > ./s3_config.py
 
       - name: SCP 로 EC2 에 파일 전송
         uses: appleboy/scp-action@v0.1.7
@@ -22,7 +23,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: |
-            ./db_config.py
+            ./db_config.py, ./s3_config.py
           target: /home/ubuntu/AI-Server/config
 
       - name: 서버 배포

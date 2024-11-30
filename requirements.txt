@@ -18,3 +18,6 @@ sqlalchemy
 
 # ec2 배포 관련
 onnxruntime
+
+# s3 관련
+boto3

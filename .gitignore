@@ -214,5 +214,5 @@ test.py
 locustfile.py
 model_lite.py
 
-config/db_config.py
+config
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,venv,python
