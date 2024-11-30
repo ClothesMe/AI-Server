@@ -38,4 +38,4 @@ jobs:
             git pull origin main
             source venv/bin/activate
             sudo fuser -k -n tcp 8080 || true
-            nohup uvicorn controller.main:app --host 0.0.0.0 --port $IDLE_PORT > my.log2>&1 &
+            nohup uvicorn controller.main:app --host 0.0.0.0 --port 8080 > my.log2>&1 &
