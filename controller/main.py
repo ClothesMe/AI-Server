@@ -1,6 +1,6 @@
 import cv2
 from service import socks as socks
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi import File, UploadFile
 import numpy as np
 from service import clothes as ct
@@ -10,7 +10,7 @@ from PIL import Image
 import io
 from common import background as bg
 from sqlalchemy.orm import Session
-from db.database import Base, engine, SessionLocal
+from db.database import Base, engine, SessionLocal, Member, Clothes
 import db.database as database
 import uuid
 
@@ -64,7 +64,7 @@ async def socks_color(file: UploadFile):
     }
 
 @app.post("/clothes")
-async def read_clothes(file: UploadFile):
+async def read_clothes(file: UploadFile, db: Session = Depends(get_db)):
 
     image = await file.read() # 이미지 파일 받아오는 부분
     image = Image.open(io.BytesIO(image))
@@ -77,12 +77,20 @@ async def read_clothes(file: UploadFile):
     color = ct.getClothesColor(pil_image)
     pattern = label.clothes_pattern[ct.getClothesPattern(pil_image)]
     clothes_type = label.clothes_categories[ct.getClothesType(pil_image)]
+    result = color + " 의 " + pattern + " 패턴의 " + clothes_type
+
+    # 멤버 정보 조회해오기 : 30641bf1-c072-491f-a392-b4a9e2b05643
+    member = db.query(Member).filter(Member.uuid == "30641bf1-c072-491f-a392-b4a9e2b05643").first()
+    if member is None:
+        raise HTTPException(status_code=400, detail="Member not found")
+
+    database.create_clothes(db=db, clothes_name=result, clothes_type=clothes_type, clothes_color=color, clothes_pattern=pattern, member_id=member.id)
 
     return {
         "status": "success",
         "code": "2000",
         "message": "Ok",
-        "result": color + " 의 " + pattern + " 패턴의 " + clothes_type + " 입니다."
+        "result": result + " 입니다."
     }
 
 # 회원가입

@@ -39,6 +39,14 @@ def create_member(db: Session, uuid: String):
     db.refresh(new_member)
     print(f"Member created: {new_member}")
 
+# CREATE
+def create_clothes(db: Session, clothes_name: String, clothes_type: String, clothes_color: String, clothes_pattern: String, member_id: Integer):
+    new_clothes = Clothes(clothes_name=clothes_name, clothes_type=clothes_type, clothes_color=clothes_color, clothes_pattern=clothes_pattern, member_id=member_id)
+    db.add(new_clothes)
+    db.commit()
+    db.refresh(new_clothes)
+    print(f"Clothes created: {new_clothes}")
+
 # class egineconn:
 #     def __init__(self):
 #         self.engine = create_engine(DB_URL, pool_recycle = 500)

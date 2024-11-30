@@ -215,4 +215,6 @@ locustfile.py
 model_lite.py
 
 config
+ai_models/type_model.h5
+
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,venv,python
