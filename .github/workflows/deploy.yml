@@ -3,7 +3,7 @@ name: CI/CD 배포 자동화 # 워크플로우의 이름을 붙이는 것
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   Deploy:
@@ -21,7 +21,7 @@ jobs:
 
       - name: rds, s3 관련 파일 생성
         run: |
-          echo "${{ secrets.db_config }}" > ./db_config.py
+          echo "${{ secrets.DB_CONFIG }}" > ./db_config.py
 
       - name: 빌드 및 테스트
         run: ./gradlew clean build
@@ -45,7 +45,7 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
 
           script: |
-            git pull origin master
+            git pull origin main
             cd ~/AI-Server
             source venv/bin/activate
             cd ~/deploy
