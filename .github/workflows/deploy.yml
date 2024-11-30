@@ -34,8 +34,8 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
 
           script: |
-            git pull origin main
             cd ~/AI-Server
+            git pull origin main
             source venv/bin/activate
             cd ~/deploy
             bash stop.sh
