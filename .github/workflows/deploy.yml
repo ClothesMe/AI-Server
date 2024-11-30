@@ -10,21 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 리포지토리 파일 불러오기
-        uses: actions/checkout@v4
-
-      - name: 빌드, 테스트를 위한 java17 설치
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
 
       - name: rds, s3 관련 파일 생성
         run: |
           echo "${{ secrets.DB_CONFIG }}" > ./db_config.py
-
-      - name: 빌드 및 테스트
-        run: ./gradlew clean build
 
       - name: SCP 로 EC2 에 파일 전송
         uses: appleboy/scp-action@v0.1.7
