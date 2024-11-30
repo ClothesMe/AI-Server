@@ -97,6 +97,11 @@ def create_user(db: Session = Depends(get_db)):
         "result": member_uuid
     }
 
+# 무중단 배포에 사용할 헬스체크
+@app.get("/health")
+def healthCheck():
+    return "health!"
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
