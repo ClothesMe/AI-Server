@@ -75,8 +75,8 @@ async def read_clothes(file: UploadFile, db: Session = Depends(get_db)):
 
     # 옷 정보 받아오기
     color = ct.getClothesColor(pil_image)
-    pattern = label.clothes_pattern[ct.getClothesPattern(pil_image)]
-    clothes_type = label.clothes_categories[ct.getClothesType(pil_image)]
+    pattern = label.clothes_pattern[ct.getClothesPattern(image)]
+    clothes_type = label.clothes_categories[ct.getClothesType(image)]
     result = color + " 의 " + pattern + " 패턴의 " + clothes_type
 
     # 멤버 정보 조회해오기 : 30641bf1-c072-491f-a392-b4a9e2b05643

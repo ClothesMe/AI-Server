@@ -11,7 +11,7 @@ from common import model as model
 from common import color as color
 
 
-def getClothesType(image):
+async def getClothesType(image):
 
     # 새로운 이미지 전처리 및 예측
     preprocessed_image = preprocess_image(image)
@@ -28,7 +28,7 @@ def getClothesColor(image):
     
     return clothes_color
 
-def getClothesPattern(image):
+async def getClothesPattern(image):
 
     # 새로운 이미지 전처리 및 예측
     preprocessed_image = preprocess_image(image)
