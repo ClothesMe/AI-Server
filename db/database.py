@@ -5,7 +5,10 @@ from sqlalchemy import Column, TEXT, INT, BIGINT, ForeignKey, String
 from config.db_config import DB_URL;
 
 # 데이터베이스 연결 설정
-engine = create_engine(DB_URL)
+# engine = create_engine(DB_URL) 
+# 테이블 삭제
+
+engine = create_engine("sqlite:///clothesme.db")
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -15,7 +18,7 @@ Base = declarative_base()
 class Clothes(Base):
     __tablename__ = "clothes"
 
-    id = Column(BIGINT, nullable=False, autoincrement=True, primary_key=True)
+    id = Column(Integer, nullable=False, autoincrement=True, primary_key=True)
     clothes_name = Column(TEXT, nullable=False)
     clothes_type = Column(TEXT, nullable=False)
     clothes_color = Column(TEXT, nullable=False)
@@ -26,14 +29,14 @@ class Member(Base):
     __tablename__ = "member"
 
     id = Column(Integer, nullable=False, autoincrement=True, primary_key=True)
-    uuid = Column(String(36), nullable=False, unique=True)
+    uuid = Column(String(100), nullable=False, unique=True)
 
 # 테이블 생성
 Base.metadata.create_all(engine)
 
 # CREATE
 def create_member(db: Session, uuid: String):
-    new_member = Member(uuid=uuid)
+    new_member = Member(uuid=str(uuid))
     db.add(new_member)
     db.commit()
     db.refresh(new_member)

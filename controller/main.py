@@ -15,7 +15,9 @@ import db.database as database
 import uuid
 
 # 데이터베이스 초기화
-database.Base.metadata.create_all(bind=engine)
+# 테이블 다시 생성
+Base.metadata.create_all(engine)
+# database.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -70,17 +72,17 @@ async def read_clothes(file: UploadFile, db: Session = Depends(get_db)):
     image = Image.open(io.BytesIO(image))
 
     # 옷 배경 제거한 후 이미지 파일 넘겨주기
-    removed_image = bg.remove_background(image) # 배경 제거
+    removed_image = await bg.remove_background(image) # 배경 제거
     pil_image = Image.fromarray(removed_image) # 이미지를 PIL 이미지로 변환
 
     # 옷 정보 받아오기
-    color = ct.getClothesColor(pil_image)
-    pattern = label.clothes_pattern[ct.getClothesPattern(image)]
-    clothes_type = label.clothes_categories[ct.getClothesType(image)]
+    color = await ct.getClothesColor(pil_image)
+    pattern = label.clothes_pattern[await ct.getClothesPattern(image)]
+    clothes_type = label.clothes_categories[await ct.getClothesType(image)]
     result = color + " 의 " + pattern + " 패턴의 " + clothes_type
 
     # 멤버 정보 조회해오기 : 30641bf1-c072-491f-a392-b4a9e2b05643
-    member = db.query(Member).filter(Member.uuid == "30641bf1-c072-491f-a392-b4a9e2b05643").first()
+    member = db.query(Member).filter(Member.uuid == "6c47047d-9926-4f46-b6d5-1ff6a17792a8").first()
     if member is None:
         raise HTTPException(status_code=400, detail="Member not found")
 

@@ -2,7 +2,7 @@ from rembg import remove
 import numpy as np
 from PIL import Image
 
-def remove_background(clothes_image):
+async def remove_background(clothes_image):
     """
     배경 제거
     :param cloth_image: 배경 제거할 이미지

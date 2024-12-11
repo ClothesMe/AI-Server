@@ -22,7 +22,7 @@ async def getClothesType(image):
 
     return predicted_class
 
-def getClothesColor(image):
+async def getClothesColor(image):
 
     clothes_color = color.getClothesMainColor(image)
     
